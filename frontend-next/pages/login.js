@@ -9,6 +9,8 @@ export default function Login() {
     const [senha, setSenha] = useState('');
     const router = useRouter();
 
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
