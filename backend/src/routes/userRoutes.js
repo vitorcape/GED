@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const Usuario = require('../models/User');
 
+const autenticar = require('../middleware/auth'); // se ainda não tiver
+
+router.get('/protegido', autenticar, (req, res) => {
+    res.json({ mensagem: `Bem-vindo, usuário ${req.usuario.id}` });
+});
+
 router.post('/cadastrar', async (req, res) => {
     try {
         const { nome, nickname, email, cargo, avatar, permissao, senha } = req.body;
