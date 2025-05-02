@@ -31,9 +31,18 @@ router.post('/cadastrar', async (req, res) => {
 
         res.status(201).json(novoUsuario);
     } catch (error) {
-        console.error('🔥 Erro ao cadastrar usuário:', error);
+        console.error('Erro ao cadastrar usuário:', error);
         res.status(500).json({ erro: 'Erro ao cadastrar usuário', detalhes: error.message });
     }
+});
+
+router.get('/', autenticar, async (req, res) => {
+    if (req.usuario.permissao !== 'admin') {
+        return res.status(403).json({ erro: 'Acesso negado' });
+    }
+
+    const usuarios = await Usuario.find().select('-senha'); // não retorna senhas
+    res.json(usuarios);
 });
 
 module.exports = router;
