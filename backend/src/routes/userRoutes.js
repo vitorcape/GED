@@ -74,12 +74,14 @@ router.put('/:id', autenticar, async (req, res) => {
             { new: true }
         );
 
-        if (!usuario) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+        if (!usuario) {
+            return res.status(404).json({ erro: 'Usuário não encontrado.' });
+        }
 
         res.json(usuario);
     } catch (err) {
         console.error('Erro ao editar usuário:', err);
-        res.status(500).json({ erro: 'Erro ao editar usuário.' });
+        res.status(500).json({ erro: 'Erro interno ao editar usuário.' });
     }
 });
 
