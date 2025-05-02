@@ -4,14 +4,14 @@ const Usuario = require('../models/User');
 
 router.post('/cadastrar', async (req, res) => {
     try {
-        const { nome, nickname, email, cargo, avatar, permissao } = req.body;
+        const { nome, nickname, email, cargo, avatar, permissao, senha } = req.body;
 
         const usuarioExistente = await Usuario.findOne({ email });
         if (usuarioExistente) {
             return res.status(400).json({ erro: 'E-mail já cadastrado' });
         }
 
-        const novoUsuario = new Usuario({ nome, nickname, email, cargo, avatar, permissao });
+        const novoUsuario = new Usuario({ nome, nickname, email, cargo, avatar, permissao, senha });
         await novoUsuario.save();
 
         res.status(201).json(novoUsuario);

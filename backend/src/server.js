@@ -27,6 +27,8 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Porta padrão (usada pelo Railway)
 const PORT = process.env.PORT;
+if (!PORT) throw new Error('PORT não definida no ambiente');
+
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
