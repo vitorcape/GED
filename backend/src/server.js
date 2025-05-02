@@ -19,6 +19,11 @@ console.log("Rotas carregadas com sucesso");
 app.use('/users', usuariosRoute);
 app.get('/', (req, res) => res.send('API online!'));
 
+const authRoute = require('./routes/auth');
+app.use('/auth', authRoute);
+const usuariosRoute = require('./routes/userRoutes');
+app.use('/users', usuariosRoute);
+
 const PORT = process.env.PORT;
 if (!PORT) throw new Error('PORT não definida no ambiente');
 
