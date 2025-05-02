@@ -42,3 +42,7 @@ if (!PORT) {
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
+
+setInterval(() => {
+    console.log("Mantendo container Railway ativo...");
+}, 10000); // a cada 10 segundos  
