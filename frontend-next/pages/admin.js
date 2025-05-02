@@ -1,8 +1,8 @@
 // frontend-next/pages/admin.js
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../components/header';
+import Footer from '../components/footer';
 import { useRouter } from 'next/router';
 
 export default function AdminPanel() {
@@ -21,7 +21,7 @@ export default function AdminPanel() {
             .catch(err => {
                 console.error('Erro ao buscar usuários:', err);
                 setErro('Acesso negado ou erro ao carregar.');
-                router.push('/login');
+                router.push('/');
             });
     }, []);
 
