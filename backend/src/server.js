@@ -5,8 +5,19 @@ const cors = require('cors');
 
 const app = express();
 app.use(express.json());
+const whitelist = [
+    'http://localhost:3000',
+    'https://ged-ten.vercel.app'
+];
+
 app.use(cors({
-    origin: '*',
+    origin: function (origin, callback) {
+        if (!origin || whitelist.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS: ' + origin));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
