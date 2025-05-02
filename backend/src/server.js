@@ -13,7 +13,10 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+console.log("Iniciando require das rotas...");
 const usuariosRoute = require('./routes/userRoutes');
+console.log("Rotas carregadas com sucesso");
+
 app.use('/users', usuariosRoute);
 
 // Rota de teste
@@ -24,7 +27,11 @@ app.get('/', (req, res) => {
 // Conexão com MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB conectado com sucesso!'))
-    .catch(err => console.error('Erro na conexão com MongoDB:', err));
+    .catch(err => {
+        console.error('Erro na conexão com MongoDB:', err);
+        process.exit(1); // encerra se der erro
+    });
+
 
 // Porta padrão (usada pelo Railway)
 const PORT = process.env.PORT;
