@@ -18,7 +18,7 @@ export default function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`https://ged-production.up.railway.app/users/cadastrar`, form);
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/cadastrar`, form);
             alert('Cadastro realizado com sucesso!');
             router.push('/login');
         } catch (err) {
