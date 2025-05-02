@@ -1,8 +1,8 @@
 // frontend-next/pages/admin.js
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Header from '../components/header';
-import Footer from '../components/footer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { useRouter } from 'next/router';
 
 export default function AdminPanel() {
@@ -21,7 +21,7 @@ export default function AdminPanel() {
             .catch(err => {
                 console.error('Erro ao buscar usuários:', err);
                 setErro('Acesso negado ou erro ao carregar.');
-                router.push('/');
+                router.push('/login');
             });
     }, []);
 
@@ -35,6 +35,23 @@ export default function AdminPanel() {
         } catch (err) {
             console.error('Erro ao promover:', err);
             alert('Erro ao promover usuário.');
+        }
+    };
+
+    const editarUsuario = (id) => {
+        alert(`Função de edição ainda não implementada para o usuário ${id}`);
+    };
+
+    const apagarUsuario = async (id) => {
+        const token = localStorage.getItem('token');
+        try {
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/users/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUsuarios(usuarios.filter(u => u._id !== id));
+        } catch (err) {
+            console.error('Erro ao apagar:', err);
+            alert('Erro ao apagar usuário.');
         }
     };
 
@@ -60,9 +77,26 @@ export default function AdminPanel() {
                                 <td>{usuario.email}</td>
                                 <td>{usuario.permissao}</td>
                                 <td>
+                                    <button
+                                        className="btn btn-sm btn-secondary me-2"
+                                        onClick={() => editarUsuario(usuario._id)}
+                                    >
+                                        <i className="fas fa-edit"></i>
+                                    </button>
+
+                                    <button
+                                        className="btn btn-sm btn-danger me-2"
+                                        onClick={() => apagarUsuario(usuario._id)}
+                                    >
+                                        <i className="fas fa-trash"></i>
+                                    </button>
+
                                     {usuario.permissao !== 'admin' && (
-                                        <button className="btn btn-sm btn-warning" onClick={() => promoverParaAdmin(usuario._id)}>
-                                            Tornar Admin
+                                        <button
+                                            className="btn btn-sm btn-warning"
+                                            onClick={() => promoverParaAdmin(usuario._id)}
+                                        >
+                                            <i className="fas fa-user-shield"></i>
                                         </button>
                                     )}
                                 </td>

@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Usuario = require('../models/User');
-
-const autenticar = require('../middleware/auth'); // se ainda não tiver
+const autenticar = require('../middleware/auth');
 
 router.get('/protegido', autenticar, (req, res) => {
     res.json({ mensagem: `Bem-vindo, usuário ${req.usuario.id}` });
@@ -43,6 +42,24 @@ router.get('/', autenticar, async (req, res) => {
 
     const usuarios = await Usuario.find().select('-senha'); // não retorna senhas
     res.json(usuarios);
+});
+
+router.delete('/:id', autenticar, async (req, res) => {
+    try {
+        if (req.usuario.permissao !== 'admin') {
+            return res.status(403).json({ erro: 'Apenas administradores podem excluir usuários.' });
+        }
+
+        const usuario = await Usuario.findByIdAndDelete(req.params.id);
+        if (!usuario) {
+            return res.status(404).json({ erro: 'Usuário não encontrado.' });
+        }
+
+        res.json({ mensagem: 'Usuário apagado com sucesso.' });
+    } catch (err) {
+        console.error('Erro ao deletar usuário:', err);
+        res.status(500).json({ erro: 'Erro ao deletar usuário.' });
+    }
 });
 
 module.exports = router;
