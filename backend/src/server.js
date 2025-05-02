@@ -1,7 +1,8 @@
 require('dotenv').config();
+console.log("PORTA recebida via ambiente:", process.env.PORT);
 const express = require('express');
 const mongoose = require('mongoose');
-  
+
 const app = express();
 app.use(express.json());
 
@@ -10,7 +11,7 @@ app.use(cors({
     origin: '*', // ou 'http://localhost:3000' para limitar
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
-  }));
+}));
 
 const usuariosRoute = require('./routes/userRoutes');
 app.use('/users', usuariosRoute);
@@ -27,7 +28,9 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Porta padrão (usada pelo Railway)
 const PORT = process.env.PORT;
-if (!PORT) throw new Error('PORT não definida no ambiente');
+if (!PORT) {
+    throw new Error('PORT não definida no ambiente');
+}
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
