@@ -2,6 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 
+const cors = require('cors');
+app.use(cors({
+    origin: '*', // ou 'http://localhost:3000' para limitar
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
+  
 const app = express();
 app.use(express.json());
 
