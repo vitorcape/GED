@@ -16,6 +16,7 @@ router.post('/cadastrar', async (req, res) => {
 
         res.status(201).json(novoUsuario);
     } catch (error) {
+        console.error('🔥 Erro ao cadastrar usuário:', error);
         res.status(500).json({ erro: 'Erro ao cadastrar usuário', detalhes: error.message });
     }
 });
