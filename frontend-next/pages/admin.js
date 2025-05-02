@@ -1,13 +1,16 @@
 // frontend-next/pages/admin.js
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Header from '../components/header';
-import Footer from '../components/footer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { useRouter } from 'next/router';
 
 export default function AdminPanel() {
     const [usuarios, setUsuarios] = useState([]);
+    const [logs, setLogs] = useState([]);
     const [erro, setErro] = useState(null);
+    const [editandoId, setEditandoId] = useState(null);
+    const [novoNome, setNovoNome] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -23,6 +26,12 @@ export default function AdminPanel() {
                 setErro('Acesso negado ou erro ao carregar.');
                 router.push('/login');
             });
+
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/logs`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then(res => setLogs(res.data))
+            .catch(err => console.error('Erro ao buscar logs:', err));
     }, []);
 
     const promoverParaAdmin = async (id) => {
@@ -38,8 +47,23 @@ export default function AdminPanel() {
         }
     };
 
-    const editarUsuario = (id) => {
-        alert(`Função de edição ainda não implementada para o usuário ${id}`);
+    const editarUsuario = (id, nomeAtual) => {
+        setEditandoId(id);
+        setNovoNome(nomeAtual);
+    };
+
+    const salvarEdicao = async (id) => {
+        const token = localStorage.getItem('token');
+        try {
+            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/users/${id}`, { nome: novoNome }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUsuarios(usuarios.map(u => u._id === id ? { ...u, nome: novoNome } : u));
+            setEditandoId(null);
+        } catch (err) {
+            console.error('Erro ao editar usuário:', err);
+            alert('Erro ao editar usuário.');
+        }
     };
 
     const apagarUsuario = async (id) => {
@@ -73,16 +97,35 @@ export default function AdminPanel() {
                     <tbody>
                         {usuarios.map(usuario => (
                             <tr key={usuario._id}>
-                                <td>{usuario.nome}</td>
+                                <td>
+                                    {editandoId === usuario._id ? (
+                                        <input
+                                            value={novoNome}
+                                            onChange={e => setNovoNome(e.target.value)}
+                                            className="form-control form-control-sm"
+                                        />
+                                    ) : (
+                                        usuario.nome
+                                    )}
+                                </td>
                                 <td>{usuario.email}</td>
                                 <td>{usuario.permissao}</td>
                                 <td>
-                                    <button
-                                        className="btn btn-sm btn-secondary me-2"
-                                        onClick={() => editarUsuario(usuario._id)}
-                                    >
-                                        <i className="fas fa-edit"></i>
-                                    </button>
+                                    {editandoId === usuario._id ? (
+                                        <button
+                                            className="btn btn-sm btn-success me-2"
+                                            onClick={() => salvarEdicao(usuario._id)}
+                                        >
+                                            <i className="fas fa-check"></i>
+                                        </button>
+                                    ) : (
+                                        <button
+                                            className="btn btn-sm btn-secondary me-2"
+                                            onClick={() => editarUsuario(usuario._id, usuario.nome)}
+                                        >
+                                            <i className="fas fa-edit"></i>
+                                        </button>
+                                    )}
 
                                     <button
                                         className="btn btn-sm btn-danger me-2"
@@ -100,6 +143,30 @@ export default function AdminPanel() {
                                         </button>
                                     )}
                                 </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                <h4 className="mt-5">Histórico de Acesso</h4>
+                <table className="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Email</th>
+                            <th>Data</th>
+                            <th>IP</th>
+                            <th>Navegador</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {logs.map((log, index) => (
+                            <tr key={index}>
+                                <td>{log.usuario?.nome || '-'}</td>
+                                <td>{log.email}</td>
+                                <td>{new Date(log.data).toLocaleString()}</td>
+                                <td>{log.ip}</td>
+                                <td>{log.userAgent}</td>
                             </tr>
                         ))}
                     </tbody>

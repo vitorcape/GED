@@ -1,6 +1,7 @@
 const Usuario = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const AccessLog = require('../models/AccessLog');
 
 exports.login = async (req, res) => {
     const { email, senha } = req.body;
@@ -17,6 +18,13 @@ exports.login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '2h' }
         );
+
+        await AccessLog.create({
+            usuario: usuario._id,
+            email: usuario.email,
+            ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+            userAgent: req.headers['user-agent']
+        });
 
         res.json({ token, usuario });
     } catch (err) {

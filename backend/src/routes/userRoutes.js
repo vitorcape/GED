@@ -62,4 +62,34 @@ router.delete('/:id', autenticar, async (req, res) => {
     }
 });
 
+router.put('/:id', autenticar, async (req, res) => {
+    try {
+        if (req.usuario.permissao !== 'admin') {
+            return res.status(403).json({ erro: 'Apenas admins podem editar usuários.' });
+        }
+
+        const usuario = await Usuario.findByIdAndUpdate(
+            req.params.id,
+            { nome: req.body.nome },
+            { new: true }
+        );
+
+        if (!usuario) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+
+        res.json(usuario);
+    } catch (err) {
+        console.error('Erro ao editar usuário:', err);
+        res.status(500).json({ erro: 'Erro ao editar usuário.' });
+    }
+});
+
+router.get('/logs', autenticar, async (req, res) => {
+    if (req.usuario.permissao !== 'admin') {
+        return res.status(403).json({ erro: 'Apenas admins podem ver logs.' });
+    }
+
+    const logs = await AccessLog.find().populate('usuario', 'nome email').sort({ data: -1 }).limit(50);
+    res.json(logs);
+});
+
 module.exports = router;
