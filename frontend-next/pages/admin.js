@@ -1,8 +1,8 @@
 // frontend-next/pages/admin.js
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../components/header';
+import Footer from '../components/footer';
 import { useRouter } from 'next/router';
 
 export default function AdminPanel() {
