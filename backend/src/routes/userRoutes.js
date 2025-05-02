@@ -8,6 +8,15 @@ router.get('/protegido', autenticar, (req, res) => {
     res.json({ mensagem: `Bem-vindo, usuário ${req.usuario.id}` });
 });
 
+router.put('/:id', autenticar, async (req, res) => {
+    try {
+        const atualizado = await Usuario.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(atualizado);
+    } catch (err) {
+        res.status(500).json({ erro: 'Erro ao atualizar usuário', detalhes: err.message });
+    }
+});
+
 router.post('/cadastrar', async (req, res) => {
     try {
         const { nome, nickname, email, cargo, avatar, permissao, senha } = req.body;
