@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 const app = express();
 app.use(express.json());
 
+const usuariosRoute = require('./routes/usuarios');
+app.use('/usuarios', usuariosRoute);
+
 // Rota de teste
 app.get('/', (req, res) => {
     res.send('API online!');
